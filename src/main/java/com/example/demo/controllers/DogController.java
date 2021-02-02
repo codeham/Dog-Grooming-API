@@ -1,16 +1,25 @@
 package com.example.demo.controllers;
 
-import com.example.demo.domain.Dog;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import com.example.demo.models.Dog;
+import com.example.demo.repositories.DogRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class DogController {
 
+    @Autowired
+    DogRepository dogRepo;
+
     @PostMapping("/dogs")
     Dog newDog(@RequestBody Dog newDog){
-        return null;
+        return dogRepo.save(newDog);
+    }
+
+    @GetMapping("/dogs")
+    @ResponseBody
+    Iterable<Dog> allDogs(){
+        return dogRepo.findAll();
     }
 
 

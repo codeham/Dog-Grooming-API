@@ -1,9 +1,11 @@
-package com.example.demo.domain;
+package com.example.demo.models;
 
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+@Entity
 public class Dog {
 
     @Id
@@ -18,7 +20,9 @@ public class Dog {
     private String ownerLastName;
     private String ownerPhoneNumber;
 
-    Dog(String name, String breed, String age, String color, String ownerFirstName, String ownerLastName, String ownerPhoneNumber){
+    public Dog(){}
+
+    public Dog(String name, String breed, String age, String color, String ownerFirstName, String ownerLastName, String ownerPhoneNumber){
         this.name = name;
         this.breed = breed;
         this.age = age;
