@@ -11,25 +11,26 @@ public class Dog {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-
     private String name;
     private String breed;
     private String age;
+    private double weight;
     private String color;
-    private String ownerFirstName;
-    private String ownerLastName;
-    private String ownerPhoneNumber;
+    private String coatLength;
+    private boolean isHouseTrained;
+    private boolean isVaccinationsReady;
 
     public Dog(){}
 
-    public Dog(String name, String breed, String age, String color, String ownerFirstName, String ownerLastName, String ownerPhoneNumber){
+    public Dog(String name, String breed, String age, double weight, String color, String coatLength, boolean houseTrained, boolean vaccinationsReady) {
         this.name = name;
         this.breed = breed;
         this.age = age;
+        this.weight = weight;
         this.color = color;
-        this.ownerFirstName = ownerFirstName;
-        this.ownerLastName = ownerLastName;
-        this.ownerPhoneNumber = ownerPhoneNumber;
+        this.coatLength = coatLength;
+        this.isHouseTrained = houseTrained;
+        this.isVaccinationsReady = vaccinationsReady;
     }
 
     public String getName() {
@@ -56,6 +57,14 @@ public class Dog {
         this.age = age;
     }
 
+    public double getWeight() {
+        return weight;
+    }
+
+    public void setWeight(double weight) {
+        this.weight = weight;
+    }
+
     public String getColor() {
         return color;
     }
@@ -64,30 +73,29 @@ public class Dog {
         this.color = color;
     }
 
-    public String getOwnerFirstName() {
-        return ownerFirstName;
+    public String getCoatLength() {
+        return coatLength;
     }
 
-    public void setOwnerFirstName(String ownerFirstName) {
-        this.ownerFirstName = ownerFirstName;
+    public void setCoatLength(String coatLength) {
+        this.coatLength = coatLength;
     }
 
-    public String getOwnerLastName() {
-        return ownerLastName;
+    public boolean isHouseTrained() {
+        return isHouseTrained;
     }
 
-    public void setOwnerLastName(String ownerLastName) {
-        this.ownerLastName = ownerLastName;
+    public void setHouseTrained(boolean houseTrained) {
+        this.isHouseTrained = houseTrained;
     }
 
-    public String getOwnerPhoneNumber() {
-        return ownerPhoneNumber;
+    public boolean isVaccinationsReady() {
+        return isVaccinationsReady;
     }
 
-    public void setOwnerPhoneNumber(String ownerPhoneNumber) {
-        this.ownerPhoneNumber = ownerPhoneNumber;
+    public void setVaccinationsReady(boolean vaccinationsReady) {
+        this.isVaccinationsReady = vaccinationsReady;
     }
-
 
     @Override
     public String toString() {
@@ -96,10 +104,11 @@ public class Dog {
         sb.append(", name='").append(name).append('\'');
         sb.append(", breed='").append(breed).append('\'');
         sb.append(", age='").append(age).append('\'');
+        sb.append(", weight=").append(weight);
         sb.append(", color='").append(color).append('\'');
-        sb.append(", ownerFirstName='").append(ownerFirstName).append('\'');
-        sb.append(", ownerLastName='").append(ownerLastName).append('\'');
-        sb.append(", ownerPhoneNumber='").append(ownerPhoneNumber).append('\'');
+        sb.append(", coatLength='").append(coatLength).append('\'');
+        sb.append(", houseTrained=").append(isHouseTrained);
+        sb.append(", vaccinationsReady=").append(isVaccinationsReady);
         sb.append('}');
         return sb.toString();
     }
