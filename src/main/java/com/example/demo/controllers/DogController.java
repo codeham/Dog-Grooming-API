@@ -9,6 +9,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,13 +19,8 @@ public class DogController {
     @Autowired
     DogRepository dogRepo;
 
-//    @PostMapping("/dogs")
-//    Dog newDog(@RequestBody Dog newDog){
-//        return dogRepo.save(newDog);
-//    }
-
     @PostMapping("/dogs")
-    ResponseEntity createNewDog(@RequestBody Dog dog){
+    ResponseEntity createNewDog(@Valid @RequestBody Dog dog){
         Dog newDog = null;
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -38,7 +34,7 @@ public class DogController {
 
     @GetMapping("/dogs")
     @ResponseBody
-    Iterable<Dog> allDogs(){
+    Iterable<Dog> getAllDogs(){
         Iterable<Dog> iterable = dogRepo.findAll();
         for(Dog x: iterable){
            System.out.println(x.toString());

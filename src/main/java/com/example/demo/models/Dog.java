@@ -4,6 +4,11 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
+
 
 @Entity
 public class Dog {
@@ -11,18 +16,33 @@ public class Dog {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
+    @NotNull(message = "Name cannot be null")
+    @NotEmpty(message = "Name cannot be empty")
     private String name;
+
+    @NotNull(message = "Breed cannot be null")
+    @NotEmpty(message = "Breed cannot be empty")
     private String breed;
-    private String age;
+
+    @NotNull(message = "Age cannot be null")
+    @PositiveOrZero(message = "Age should not be less than 0")
+    private int age;
+
     private double weight;
+
     private String color;
+
     private String coatLength;
+
     private boolean isHouseTrained;
+
+    @NotNull(message = "Vaccinations indicator cannot be null")
     private boolean isVaccinationsReady;
 
     public Dog(){}
 
-    public Dog(String name, String breed, String age, double weight, String color, String coatLength, boolean houseTrained, boolean vaccinationsReady) {
+    public Dog(String name, String breed, int age, double weight, String color, String coatLength, boolean houseTrained, boolean vaccinationsReady) {
         this.name = name;
         this.breed = breed;
         this.age = age;
@@ -49,11 +69,11 @@ public class Dog {
         this.breed = breed;
     }
 
-    public String getAge() {
+    public int getAge() {
         return age;
     }
 
-    public void setAge(String age) {
+    public void setAge(int age) {
         this.age = age;
     }
 
