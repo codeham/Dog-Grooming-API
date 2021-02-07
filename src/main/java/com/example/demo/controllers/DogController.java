@@ -7,60 +7,168 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
+@Validated
 public class DogController {
 
     @Autowired
     DogRepository dogRepo;
 
+    /**
+     * 200: dog posted to server
+     * 500: repo method fails, server issue
+     * 400: if @param Dog entity is not validated properly
+     *
+     * @param dog
+     * @return
+     */
     @PostMapping("/dogs")
     ResponseEntity createNewDog(@Valid @RequestBody Dog dog){
         Dog newDog = null;
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
+
         try{
             newDog = dogRepo.save(dog);
         }catch(Exception e){
             return new ResponseEntity(headers, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return new ResponseEntity(newDog, headers, HttpStatus.OK);
+
+        return new ResponseEntity(newDog, headers, HttpStatus.CREATED);
     }
 
+    /**
+     * 200: successful response (including empty result)
+     * 500: repo. method fails, server issue
+     *
+     * @return
+     */
     @GetMapping("/dogs")
     @ResponseBody
-    Iterable<Dog> getAllDogs(){
-        Iterable<Dog> iterable = dogRepo.findAll();
-        for(Dog x: iterable){
-           System.out.println(x.toString());
-           System.out.println();
+    ResponseEntity getAllDogs(){
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        Iterable<Dog> iterableDog = null;
+
+        try{
+            iterableDog = dogRepo.findAll();
+        }catch(Exception e){
+            return new ResponseEntity(headers, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-       return dogRepo.findAll();
+
+        return new ResponseEntity(iterableDog, headers, HttpStatus.OK);
     }
 
-//    @GetMapping("/dogs/{id}")
-//    Dog singleDog(@PathVariable Long id){
-//        return dogRepo.findById(id).orElseThrow();
-//    }
-
+    /**
+     * 200: successful response
+     * 400: if @Min(1) id is not validated properly, id non-existent
+     * 500: repo. method fails, server issue
+     * @param id
+     * @return
+     */
     @GetMapping("/dogs/{id}")
-    ResponseEntity singleDog(@PathVariable Long id){
-       Dog foundDog = dogRepo.findById(id).get();
-       HttpHeaders headers = new HttpHeaders();
-       headers.setContentType(MediaType.APPLICATION_JSON);
+    ResponseEntity getDogById(@PathVariable @Min(1) Long id){
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        Dog foundDog = null;
+       try{
+           foundDog = dogRepo.findById(id).get();
+       }catch (Exception e){
+           return new ResponseEntity(headers, HttpStatus.INTERNAL_SERVER_ERROR);
+       }
+
        return new ResponseEntity(foundDog, headers, HttpStatus.OK);
     }
 
-    @DeleteMapping("/dogs/{id}")
-    @CrossOrigin
-    void deleteBook(@PathVariable Long id){
-        dogRepo.deleteById(id);
+    /**
+     * 200: @RequestBody Dog entity values successfully replace existing entity values
+     * 200: @RequestBody Repo. stores new Dog entity if id is non-existent
+     * 400: if @param Dog entity is not validated properly
+     * @param id
+     * @param updatedDog
+     * @return
+     */
+    @PutMapping("/dogs/{id}")
+    ResponseEntity updateDogById(@PathVariable @Min(1) Long id, @Valid @RequestBody Dog updatedDog){
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        return dogRepo.findById(id).map(dog -> {
+            dog.setName(updatedDog.getName());
+            dog.setAge(updatedDog.getAge());
+            dog.setBreed(updatedDog.getBreed());
+            dog.setWeight(updatedDog.getWeight());
+            dog.setColor(updatedDog.getColor());
+            dog.setCoatLength(updatedDog.getCoatLength());
+            dog.setHouseTrained(updatedDog.isHouseTrained());
+            dog.setVaccinationsReady(updatedDog.isVaccinationsReady());
+            dogRepo.save(dog);
+            return new ResponseEntity(dog, headers, HttpStatus.OK);
+        }).orElseGet(() -> {
+            updatedDog.setId(id);
+            dogRepo.save(updatedDog);
+            return new ResponseEntity(updatedDog, headers, HttpStatus.OK);
+        });
     }
 
+    /**
+     * 200: successful delete
+     * 400: if @Min(1) id is not validated properly, id non-existent
+     * 500: repo. method fails, server issue
+     * @param id
+     * @return
+     */
+    @DeleteMapping("/dogs/{id}")
+    public ResponseEntity deleteDog(@PathVariable @Min(1) Long id){
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
 
+        try{
+            dogRepo.deleteById(id);
+            return new ResponseEntity(headers, HttpStatus.OK);
+        }catch(Exception e){
+            return new ResponseEntity(headers, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/dogs/findByNameAndBreed")
+    @ResponseBody
+    public ResponseEntity findByNameAndBreed(@RequestParam String name, @RequestParam String breed){
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        Iterable<Dog> dogList = null;
+
+        try{
+            dogList = dogRepo.findByNameAndBreed(name, breed);
+        }catch(Exception e){
+            return new ResponseEntity(headers, HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity(dogList, headers, HttpStatus.OK);
+    }
+
+    @GetMapping("/dogs/getByNameInOrder")
+    @ResponseBody
+    public ResponseEntity getByNameInOrder(){
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        Iterable<Dog> dogList = null;
+
+        try{
+            dogList = dogRepo.getByNameInOrder();
+        }catch(Exception e){
+            return new ResponseEntity(headers, HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity(dogList, headers, HttpStatus.OK);
+    }
 }
