@@ -12,7 +12,7 @@ import java.util.List;
 
 
 @DataJpaTest
-public class DogRepositoryTest {
+public class DogRepositoryTests {
 
     @Autowired
     private DogRepository dogRepository;

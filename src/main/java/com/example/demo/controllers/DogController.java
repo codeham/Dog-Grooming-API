@@ -19,9 +19,12 @@ import java.util.Optional;
 @RestController
 @Validated
 public class DogController {
+    private final DogRepository dogRepo;
 
     @Autowired
-    DogRepository dogRepo;
+    public DogController(DogRepository dogRepo) {
+        this.dogRepo = dogRepo;
+    }
 
     /**
      * 200: dog posted to server
@@ -71,7 +74,7 @@ public class DogController {
     /**
      * 200: successful response
      * 400: if @Min(1) id is not validated properly, id non-existent
-     * 500: repo. method fails, server issue
+     * 404: id not found in repo.
      * @param id
      * @return
      */
@@ -83,7 +86,7 @@ public class DogController {
        try{
            foundDog = dogRepo.findById(id).get();
        }catch (Exception e){
-           return new ResponseEntity(headers, HttpStatus.INTERNAL_SERVER_ERROR);
+           return new ResponseEntity(headers, HttpStatus.NOT_FOUND);
        }
 
        return new ResponseEntity(foundDog, headers, HttpStatus.OK);
@@ -123,7 +126,7 @@ public class DogController {
     /**
      * 200: successful delete
      * 400: if @Min(1) id is not validated properly, id non-existent
-     * 500: repo. method fails, server issue
+     * 404: id not found to delete
      * @param id
      * @return
      */
@@ -136,7 +139,7 @@ public class DogController {
             dogRepo.deleteById(id);
             return new ResponseEntity(headers, HttpStatus.OK);
         }catch(Exception e){
-            return new ResponseEntity(headers, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity(headers, HttpStatus.NOT_FOUND);
         }
     }
 
@@ -150,7 +153,7 @@ public class DogController {
         try{
             dogList = dogRepo.findByNameAndBreed(name, breed);
         }catch(Exception e){
-            return new ResponseEntity(headers, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(headers, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         return new ResponseEntity(dogList, headers, HttpStatus.OK);
@@ -166,7 +169,7 @@ public class DogController {
         try{
             dogList = dogRepo.getByNameInOrder();
         }catch(Exception e){
-            return new ResponseEntity(headers, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(headers, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         return new ResponseEntity(dogList, headers, HttpStatus.OK);
