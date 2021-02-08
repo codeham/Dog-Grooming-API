@@ -1,4 +1,4 @@
-package com.example.demo.controllers;
+package com.example.demo.repositories;
 
 import com.example.demo.models.Dog;
 import com.example.demo.repositories.DogRepository;
