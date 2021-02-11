@@ -1,5 +1,6 @@
 package com.example.demo.controllers;
 
+import com.example.demo.exceptions.ResourceNotFoundException;
 import com.example.demo.models.Dog;
 import com.example.demo.repositories.DogRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,14 +10,15 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
+import java.net.URI;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 @RestController
+@RequestMapping("/api/v1/")
 @Validated
 public class DogController {
     private final DogRepository dogRepo;
@@ -36,17 +38,14 @@ public class DogController {
      */
     @PostMapping("/dogs")
     ResponseEntity createNewDog(@Valid @RequestBody Dog dog){
-        Dog newDog = null;
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
+        Dog newDog = dogRepo.save(dog);
 
-        try{
-            newDog = dogRepo.save(dog);
-        }catch(Exception e){
-            return new ResponseEntity(headers, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(newDog.getId())
+                .toUri();
 
-        return new ResponseEntity(newDog, headers, HttpStatus.CREATED);
+        return ResponseEntity.created(location).build();
     }
 
     /**
@@ -57,18 +56,8 @@ public class DogController {
      */
     @GetMapping("/dogs")
     @ResponseBody
-    ResponseEntity getAllDogs(){
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        Iterable<Dog> iterableDog = null;
-
-        try{
-            iterableDog = dogRepo.findAll();
-        }catch(Exception e){
-            return new ResponseEntity(headers, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
-        return new ResponseEntity(iterableDog, headers, HttpStatus.OK);
+    Iterable<Dog> getAllDogs(){
+        return dogRepo.findAll();
     }
 
     /**
@@ -80,16 +69,10 @@ public class DogController {
      */
     @GetMapping("/dogs/{id}")
     ResponseEntity getDogById(@PathVariable @Min(1) Long id){
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        Dog foundDog = null;
-       try{
-           foundDog = dogRepo.findById(id).get();
-       }catch (Exception e){
-           return new ResponseEntity(headers, HttpStatus.NOT_FOUND);
-       }
+        Dog foundDog = dogRepo.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User with ID: " + id + " Not Found!"));
 
-       return new ResponseEntity(foundDog, headers, HttpStatus.OK);
+        return ResponseEntity.ok().body(foundDog);
     }
 
     /**
@@ -102,25 +85,13 @@ public class DogController {
      */
     @PutMapping("/dogs/{id}")
     ResponseEntity updateDogById(@PathVariable @Min(1) Long id, @Valid @RequestBody Dog updatedDog){
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
 
-        return dogRepo.findById(id).map(dog -> {
-            dog.setName(updatedDog.getName());
-            dog.setAge(updatedDog.getAge());
-            dog.setBreed(updatedDog.getBreed());
-            dog.setWeight(updatedDog.getWeight());
-            dog.setColor(updatedDog.getColor());
-            dog.setCoatLength(updatedDog.getCoatLength());
-            dog.setHouseTrained(updatedDog.isHouseTrained());
-            dog.setVaccinationsReady(updatedDog.isVaccinationsReady());
-            dogRepo.save(dog);
-            return new ResponseEntity(dog, headers, HttpStatus.OK);
-        }).orElseGet(() -> {
-            updatedDog.setId(id);
-            dogRepo.save(updatedDog);
-            return new ResponseEntity(updatedDog, headers, HttpStatus.OK);
-        });
+        Dog foundDog = dogRepo.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User with ID: " + id + " Not Found!"));
+
+        updatedDog.setId(foundDog.getId());
+        dogRepo.save(updatedDog);
+        return ResponseEntity.ok().body(updatedDog);
     }
 
     /**
@@ -132,46 +103,34 @@ public class DogController {
      */
     @DeleteMapping("/dogs/{id}")
     public ResponseEntity deleteDog(@PathVariable @Min(1) Long id){
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
+        Dog foundDog = dogRepo.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Dog with ID: " + id + " Not Found!"));
 
-        try{
-            dogRepo.deleteById(id);
-            return new ResponseEntity(headers, HttpStatus.OK);
-        }catch(Exception e){
-            return new ResponseEntity(headers, HttpStatus.NOT_FOUND);
-        }
+        dogRepo.deleteById(foundDog.getId());
+        return ResponseEntity.ok().body("Dog successfully deleted!");
     }
 
     @GetMapping("/dogs/findByNameAndBreed")
     @ResponseBody
     public ResponseEntity findByNameAndBreed(@RequestParam String name, @RequestParam String breed){
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        Iterable<Dog> dogList = null;
+        List<Dog> dogList = dogRepo.findByNameAndBreed(name, breed);
 
-        try{
-            dogList = dogRepo.findByNameAndBreed(name, breed);
-        }catch(Exception e){
-            return new ResponseEntity(headers, HttpStatus.INTERNAL_SERVER_ERROR);
+        if(dogList.isEmpty()){
+            throw new ResourceNotFoundException("Dogs by Name: " + name + " and Breed: " + breed + " Not Found!");
         }
 
-        return new ResponseEntity(dogList, headers, HttpStatus.OK);
+        return ResponseEntity.ok().body(dogList);
     }
 
     @GetMapping("/dogs/getByNameInOrder")
     @ResponseBody
     public ResponseEntity getByNameInOrder(){
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        Iterable<Dog> dogList = null;
+        List<Dog> dogList = dogRepo.getByNameInOrder();
 
-        try{
-            dogList = dogRepo.getByNameInOrder();
-        }catch(Exception e){
-            return new ResponseEntity(headers, HttpStatus.INTERNAL_SERVER_ERROR);
+        if(dogList.isEmpty()){
+            throw new ResourceNotFoundException("Dogs Sorted by Name Not Found!");
         }
 
-        return new ResponseEntity(dogList, headers, HttpStatus.OK);
+        return ResponseEntity.ok().body(dogList);
     }
 }

@@ -1,16 +1,11 @@
 package com.example.demo.models;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.PositiveOrZero;
+import javax.persistence.*;
+import javax.validation.constraints.*;
 
 
 @Entity
+@Table(name = "dogs")
 public class Dog {
 
     @Id
@@ -25,10 +20,10 @@ public class Dog {
     @NotEmpty(message = "Breed cannot be empty")
     private String breed;
 
-    @NotNull(message = "Age cannot be null")
     @PositiveOrZero(message = "Age should not be less than 0")
     private int age;
 
+    @Positive
     private double weight;
 
     private String color;

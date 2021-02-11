@@ -15,13 +15,13 @@ import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.containsString;
 
-public class DogControllerTest {
+public class DogControllerTests {
 
     private MockMvc mockMvc;
     private DogRepository dogRepo;
     private DogController dogController;
 
-    public DogControllerTest(){
+    public DogControllerTests(){
         dogRepo = Mockito.mock(DogRepository.class);
         dogController = new DogController(dogRepo);
     }
