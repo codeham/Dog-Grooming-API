@@ -34,7 +34,7 @@ public class DogControllerTests {
     @Test
     public void whenDogNotExists_thenHttp404() throws Exception{
         Mockito.doReturn(Optional.empty()).when(dogRepo).findById(1L);
-        mockMvc.perform(MockMvcRequestBuilders.get("/dogs/1"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/dogs/1"))
                 .andExpect(MockMvcResultMatchers.status().is(HttpStatus.NOT_FOUND.value()));
     }
 
@@ -46,7 +46,7 @@ public class DogControllerTests {
         Mockito.doReturn(Optional.of(testDog))
                 .when(dogRepo)
                 .findById(1L);
-        mockMvc.perform(MockMvcRequestBuilders.get("/dogs/1"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/dogs/1"))
                 .andExpect(MockMvcResultMatchers.status().is(HttpStatus.OK.value()))
                 .andExpect(MockMvcResultMatchers.content().string(containsString(dogName)));
     }
