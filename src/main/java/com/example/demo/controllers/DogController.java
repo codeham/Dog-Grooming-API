@@ -4,9 +4,6 @@ import com.example.demo.exceptions.ResourceNotFoundException;
 import com.example.demo.models.Dog;
 import com.example.demo.repositories.DogRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -73,7 +70,7 @@ public class DogController {
      * PUT mapping
      * @param id @Min(1)
      * @param updatedDog Dog req. to be updated with existing id
-     * @return dog that was updated by id in db
+     * @return dog that was updated by id in DB
      */
     @PutMapping("/dogs/{id}")
     ResponseEntity updateDogById(@PathVariable @Min(1) Long id, @Valid @RequestBody Dog updatedDog){

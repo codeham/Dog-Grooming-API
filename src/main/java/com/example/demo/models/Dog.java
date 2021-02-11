@@ -2,11 +2,13 @@ package com.example.demo.models;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
+import java.io.Serializable;
 
 
 @Entity
 @Table(name = "dogs")
-public class Dog {
+public class Dog implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
