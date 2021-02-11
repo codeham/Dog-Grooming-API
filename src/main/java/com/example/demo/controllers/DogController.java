@@ -14,6 +14,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
 import java.net.URI;
 import java.util.List;
 
@@ -29,12 +30,9 @@ public class DogController {
     }
 
     /**
-     * 200: dog posted to server
-     * 500: repo method fails, server issue
-     * 400: if @param Dog entity is not validated properly
-     *
+     * POST mapping
      * @param dog
-     * @return
+     * @return URI location for Req.
      */
     @PostMapping("/dogs")
     ResponseEntity createNewDog(@Valid @RequestBody Dog dog){
@@ -49,10 +47,8 @@ public class DogController {
     }
 
     /**
-     * 200: successful response (including empty result)
-     * 500: repo. method fails, server issue
-     *
-     * @return
+     * GET mapping
+     * @return all dogs in DB
      */
     @GetMapping("/dogs")
     @ResponseBody
@@ -61,11 +57,9 @@ public class DogController {
     }
 
     /**
-     * 200: successful response
-     * 400: if @Min(1) id is not validated properly, id non-existent
-     * 404: id not found in repo.
-     * @param id
-     * @return
+     * GET mapping
+     * @param id @Min(1)
+     * @return dog found based on id param. provided
      */
     @GetMapping("/dogs/{id}")
     ResponseEntity getDogById(@PathVariable @Min(1) Long id){
@@ -76,12 +70,10 @@ public class DogController {
     }
 
     /**
-     * 200: @RequestBody Dog entity values successfully replace existing entity values
-     * 200: @RequestBody Repo. stores new Dog entity if id is non-existent
-     * 400: if @param Dog entity is not validated properly
-     * @param id
-     * @param updatedDog
-     * @return
+     * PUT mapping
+     * @param id @Min(1)
+     * @param updatedDog Dog req. to be updated with existing id
+     * @return dog that was updated by id in db
      */
     @PutMapping("/dogs/{id}")
     ResponseEntity updateDogById(@PathVariable @Min(1) Long id, @Valid @RequestBody Dog updatedDog){
@@ -95,11 +87,9 @@ public class DogController {
     }
 
     /**
-     * 200: successful delete
-     * 400: if @Min(1) id is not validated properly, id non-existent
-     * 404: id not found to delete
-     * @param id
-     * @return
+     * DELETE mapping
+     * @param id @Min(1)
+     * @return message verifying deletion of dog
      */
     @DeleteMapping("/dogs/{id}")
     public ResponseEntity deleteDog(@PathVariable @Min(1) Long id){
@@ -110,9 +100,15 @@ public class DogController {
         return ResponseEntity.ok().body("Dog successfully deleted!");
     }
 
+    /**
+     * GET mapping
+     * @param name
+     * @param breed
+     * @return dog(s) found by attributes @param name and @param breed
+     */
     @GetMapping("/dogs/findByNameAndBreed")
     @ResponseBody
-    public ResponseEntity findByNameAndBreed(@RequestParam String name, @RequestParam String breed){
+    public ResponseEntity findByNameAndBreed(@RequestParam @NotEmpty String name, @RequestParam @NotEmpty String breed){
         List<Dog> dogList = dogRepo.findByNameAndBreed(name, breed);
 
         if(dogList.isEmpty()){
@@ -122,6 +118,10 @@ public class DogController {
         return ResponseEntity.ok().body(dogList);
     }
 
+    /**
+     * GET mapping
+     * @return dog(s) in ascending order by name attirbute
+     */
     @GetMapping("/dogs/getByNameInOrder")
     @ResponseBody
     public ResponseEntity getByNameInOrder(){
