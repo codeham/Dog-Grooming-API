@@ -3,7 +3,7 @@
   A simple extensible dog API
   
   Not much to it really... feed the API, fetch the output :)
-  
+
   Project Layers 
   (Spring Web / Hibernate / Spring Data JPA / H2)
   
@@ -15,3 +15,13 @@
   * Hibernate JPA
   * API testing (Mockito)
   * Unit testing (Junit)
+  
+  Must have Installed to Run
+  - Java 11
+  - Gradle
+
+
+Installation
+```
+git clone 
+```
