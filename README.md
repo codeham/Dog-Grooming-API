@@ -24,4 +24,5 @@
 Installation
 ```
 git clone 
+https://github.com/codeham/Dog-REST-API.git
 ```
