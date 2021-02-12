@@ -21,10 +21,12 @@
   - Gradle
 
 
-Installation
+## Installation ##
 ```
 git clone https://github.com/codeham/Dog-REST-API.git
 ```
+
+## API Testing ##
 Sample POST Request (.../api/v1/dogs)
 
 **Request Body**
