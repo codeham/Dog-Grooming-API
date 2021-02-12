@@ -26,6 +26,8 @@ Installation
 git clone https://github.com/codeham/Dog-REST-API.git
 ```
 Sample POST Request (.../api/v1/dogs)
+
+Request Body
 ```
     {
         "name": "Billy",
@@ -37,4 +39,22 @@ Sample POST Request (.../api/v1/dogs)
         "houseTrained": true,
         "vaccinationsReady": true
     }
+```
+Sample GET Request (.../api/v1/dogs)
+
+Response Body
+```
+[
+    {
+        "id": 1,
+        "name": "Billy",
+        "breed": "German Shephered",
+        "age": 3,
+        "weight": 90.0,
+        "color": "black",
+        "coatLength": "short",
+        "houseTrained": true,
+        "vaccinationsReady": true
+    }
+]
 ```
