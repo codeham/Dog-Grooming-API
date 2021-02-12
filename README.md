@@ -27,7 +27,7 @@ git clone https://github.com/codeham/Dog-REST-API.git
 ```
 Sample POST Request (.../api/v1/dogs)
 
-Request Body
+**Request Body**
 ```
     {
         "name": "Billy",
@@ -42,7 +42,7 @@ Request Body
 ```
 Sample GET Request (.../api/v1/dogs)
 
-Response Body
+**Response Body**
 ```
 [
     {
