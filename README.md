@@ -2,7 +2,7 @@
 
   A simple extensible dog API
   
-  Not much to it really... feed the API, fetch the output:smiley:
+  Not much to it really... feed the API, fetch the output :smiley:
 
   **Project Layers** 
   **(Spring Web / Hibernate / Spring Data JPA / H2)**
