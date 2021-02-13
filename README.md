@@ -2,10 +2,10 @@
 
   A simple extensible dog API
   
-  Not much to it really... feed the API, fetch the output :)
+  Not much to it really... feed the API, fetch the output:smiley:
 
-  Project Layers 
-  (Spring Web / Hibernate / Spring Data JPA / H2)
+  **Project Layers** 
+  **(Spring Web / Hibernate / Spring Data JPA / H2)**
   
   * REST controller that exposes CRUD operations
   * Request input validation
@@ -16,7 +16,7 @@
   * API testing (Mockito)
   * Unit testing (Junit)
   
-  Must have Installed to Run
+  **Must have Installed to Run**
   - Java 11
   - Gradle
 
