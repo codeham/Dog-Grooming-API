@@ -1,4 +1,4 @@
-# Dog RESTFUL API
+# Dog RESTful API
 
   A simple extensible dog API
   
